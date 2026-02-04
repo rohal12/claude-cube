@@ -53,23 +53,48 @@ Built on **[nijikokun/sugarcube-starter](https://github.com/nijikokun/sugarcube-
 ## ℹ Requirements
 
 -   [Node.js](https://nodejs.org/en/) 18+
--   [Cursor IDE](https://cursor.sh/) with Claude integration
+-   [Claude CLI](https://code.claude.com/docs/en/setup) (Claude Code)
+-   Any code editor (VSCode, Cursor, or similar)
 
 ## 🚀 Getting Started
 
-### 1. Install Cursor IDE
+### 1. Install Claude CLI
 
-Download and install Cursor from [cursor.sh](https://cursor.sh/).
+Install Claude Code using one of the following methods:
 
-Cursor is an AI-powered code editor built on VSCode that integrates Claude directly into your development workflow.
+**macOS, Linux, WSL (Recommended):**
 
-### 2. Set Up Claude
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
 
-1. Open Cursor IDE
-2. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
-3. Type "Cursor: Sign In" and select it
-4. Follow the prompts to create an account or sign in
-5. Subscribe to a Claude-enabled plan (Pro or Business)
+**Windows PowerShell:**
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**Alternative installations:**
+
+-   **Homebrew**: `brew install --cask claude-code`
+-   **WinGet**: `winget install Anthropic.ClaudeCode`
+
+For detailed installation instructions and troubleshooting, see the [official Claude Code setup guide](https://code.claude.com/docs/en/setup).
+
+### 2. Authenticate Claude
+
+After installation, authenticate using one of these options:
+
+**For individuals:**
+
+-   **Claude Pro or Max plan** (recommended) — Subscribe at [claude.ai/pricing](https://claude.ai/pricing)
+-   **Claude Console** — Set up billing at [console.anthropic.com](https://console.anthropic.com)
+
+**For teams:**
+
+-   **Claude for Teams or Enterprise** — Contact [claude.ai/pricing](https://claude.ai/pricing)
+
+Run `claude` in your terminal and follow the authentication prompts.
 
 ### 3. Clone and Set Up the Project
 
@@ -83,9 +108,16 @@ This will install all Node.js dependencies and set up the project.
 
 ### 4. Generate Your First Story
 
-In Cursor's terminal, run the interactive story creation skill:
+Start Claude CLI in your project directory:
 
 ```bash
+cd claude-cube
+claude
+```
+
+Once Claude starts, run the interactive story creation skill:
+
+```
 /create-story
 ```
 
@@ -398,11 +430,11 @@ Replace `YOUR_TAG_HERE` with your Google Analytics ID.
 -   `.claude/agents/` — Individual agent definitions and capabilities
 -   `.claude/skills/` — Available AI skills for story generation
 
-**Claude & Cursor**
+**Claude CLI & Tools**
 
--   [Cursor Documentation](https://docs.cursor.sh/)
--   [Anthropic Claude](https://www.anthropic.com/claude)
--   [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
+-   [Claude Code Documentation](https://code.claude.com/docs/en/setup) — Installation and setup
+-   [Anthropic Claude](https://www.anthropic.com/claude) — Claude AI platform
+-   [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) — Connect external tools to Claude
 
 **SugarCube Resources**
 
@@ -425,8 +457,7 @@ This project builds upon:
 -   **[SugarCube Starter](https://github.com/nijikokun/sugarcube-starter)** by [@nijikokun](https://github.com/nijikokun) — Modern starter kit with Vite, TypeScript, and Sass
 -   **SugarCube** by Thomas M. Edwards — Interactive fiction engine
 -   **Tweego** by Thomas M. Edwards — Story compiler
--   **Claude** by Anthropic — AI agent framework
--   **Cursor** — AI-powered development environment
+-   **Claude** by Anthropic — AI agent framework and Claude Code CLI
 
 **Community Thanks:**
 
