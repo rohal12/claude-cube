@@ -165,13 +165,15 @@ Follow the `convergenceNote` for exactly which variables need conditional branch
 | `<<if>>...<<elseif>>...<<else>>...<</if>>` | Multi-branch conditional     | For 3+ variants                           |
 | `<<print $var>>` or `<<= $var>>`           | Display variable value       | `Your trust is <<= $trust>>`              |
 
-## Whitespace Control (IMPORTANT)
+## Whitespace Control (CRITICAL)
 
-SugarCube renders blank lines between macros as visible whitespace in the output. Multiple `<<set>>` statements on separate lines will create empty lines in the displayed text, disrupting reading flow.
+SugarCube renders blank lines as visible whitespace in the output. This disrupts reading flow and creates awkward gaps in prose.
 
-**Always wrap consecutive macros in `<<nobr>>`:**
+### The Problem
 
-Bad (creates 3 blank lines):
+Macros on separate lines create blank lines in the output:
+
+❌ **Bad** (creates 3 blank lines):
 
 ```
 <<set $trust += 1>>
@@ -181,31 +183,56 @@ Bad (creates 3 blank lines):
 You continue down the hallway.
 ```
 
-Good (no extra whitespace):
+### Solution 1: Single-Line Macros (PREFERRED)
+
+Place all consecutive macros on a single line with no spaces between them:
+
+✅ **Good**:
 
 ```
+You abandon the shadows and break for it.
+<<set $chaos += 1>><<set $stealth -= 1>>
+Every instinct screams that this is wrong.
+```
+
+This creates NO blank lines between the prose sentences.
+
+### Solution 2: `<<nobr>>` Without Surrounding Blank Lines
+
+If you must use multiple lines, wrap in `<<nobr>>` and place it directly adjacent to prose with NO blank lines before or after:
+
+✅ **Good**:
+
+```
+You abandon the shadows and break for it.
 <<nobr>>
-<<set $trust += 1>>
-<<set $has_key = true>>
-<<set $met_guard = true>>
+<<set $chaos += 1>>
+<<set $stealth -= 1>>
+<</nobr>>
+Every instinct screams that this is wrong.
+```
+
+❌ **Bad** (blank lines around `<<nobr>>` still create gaps):
+
+```
+You abandon the shadows and break for it.
+
+<<nobr>>
+<<set $chaos += 1>>
+<<set $stealth -= 1>>
 <</nobr>>
 
-You continue down the hallway.
+Every instinct screams that this is wrong.
 ```
 
-Alternative — single line:
+### Rule of Thumb
 
-```
-<<set $trust += 1>><<set $has_key = true>><<set $met_guard = true>>
+**Never have more than one consecutive blank line in your passage prose.** Between any two prose sentences, there should be either:
 
-You continue down the hallway.
-```
+-   Zero blank lines (macros on same line as prose)
+-   One blank line (paragraph break)
 
-**Use `<<nobr>>` whenever you have**:
-
--   Multiple consecutive `<<set>>` statements
--   `<<if>>` blocks with multiple assignments inside
--   Any cluster of macros that would otherwise create unwanted blank lines
+**Use single-line macros whenever possible** — they're cleaner and eliminate whitespace issues entirely.
 
 ## Text Formatting (NOT Markdown!)
 
