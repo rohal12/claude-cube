@@ -93,23 +93,51 @@ body {
 
 ```css
 #ui-bar {
-    /* The sidebar */
+  /* The sidebar */
 }
 
 #ui-bar-toggle {
-    /* Sidebar show/hide button */
+  /* Sidebar show/hide button */
+}
+
+#ui-bar-body {
+  /* The main body of the sidebar */
 }
 
 #story-title {
-    /* Title in sidebar */
+  /* Title in sidebar */
 }
 
 #story-caption {
-    /* Caption area below title */
+  /* Caption area below title */
 }
 
 #menu-core {
-    /* Core menu (Saves, Restart, etc.) */
+  /* Core menu (Saves, Restart, etc.) */
+}
+
+#menu-story {
+  /* Story-specific menu items */
+}
+
+#menu ul {
+  /* Menu list containers */
+}
+
+#menu li {
+  /* Individual menu items */
+}
+
+#menu li a, #menu li button {
+  /* Menu links and buttons */
+}
+
+.menu-item {
+  /* Individual menu item wrapper */
+}
+
+#ui-bar a, #ui-bar button {
+  /* All links and buttons in the UI bar */
 }
 ```
 
@@ -373,11 +401,77 @@ body {
 // ===========================================
 
 #ui-bar {
-    background: var(--theme-ui-bg);
+  background: var(--theme-ui-bg);
+  border-right: 1px solid var(--theme-ui-border);
+}
+
+#ui-bar-body {
+  // Sidebar body background
+}
+
+#ui-bar-toggle {
+  // Toggle button styling
+  background: var(--theme-ui-bg);
+  border: 1px solid var(--theme-ui-border);
+  color: var(--theme-ui-text);
+  
+  &:hover {
+    background: var(--theme-bg-alt);
+    color: var(--theme-accent);
+  }
 }
 
 #story-title {
+  color: var(--theme-accent);
+  font-weight: 600;
+}
+
+#story-caption {
+  color: var(--theme-text-muted);
+}
+
+// Menu styling - CRITICAL for visibility
+#menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#menu li {
+  margin: 0.5em 0;
+}
+
+#menu li a,
+#menu li button {
+  display: block;
+  padding: 0.5em 1em;
+  color: var(--theme-ui-text);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: 1px solid transparent;
+  
+  &:hover {
+    background: var(--theme-bg-alt);
     color: var(--theme-accent);
+    border-color: var(--theme-accent);
+  }
+  
+  &:active {
+    background: var(--theme-accent);
+    color: var(--theme-ui-bg);
+  }
+}
+
+// All links and buttons in UI bar
+#ui-bar a,
+#ui-bar button {
+  color: var(--theme-ui-text);
+  
+  &:hover {
+    color: var(--theme-accent);
+  }
 }
 
 // ===========================================
@@ -403,15 +497,19 @@ Before writing the file, verify:
 1. **Contrast**: Text is readable against background (WCAG AA minimum)
 2. **Link visibility**: Links are clearly distinguishable from regular text
 3. **Hover states**: Interactive elements have visible hover feedback
-4. **Consistency**: Colors and fonts are used consistently throughout
-5. **No conflicts**: Styles don't break SugarCube's core functionality
-6. **Variables defined**: All CSS custom properties are defined in :root
+4. **UI Bar visibility**: Menu items (#menu li a, #menu li button) have sufficient contrast and clear hover states
+5. **UI Bar toggle**: The toggle button is visible and styled appropriately
+6. **Consistency**: Colors and fonts are used consistently throughout
+7. **No conflicts**: Styles don't break SugarCube's core functionality
+8. **Variables defined**: All CSS custom properties are defined in :root
 
 ## Important Rules
 
 -   Do NOT modify `src/assets/app/styles/index.scss` — only create/update `story-theme.scss`
 -   Always use CSS custom properties for colors to enable easy theming
 -   Keep accessibility in mind — maintain sufficient color contrast
+-   **CRITICAL**: Always style UI bar menu items (#menu li a, #menu li button) to ensure they are visible and have clear hover states
+-   **CRITICAL**: Ensure UI bar text (--theme-ui-text) has sufficient contrast against UI bar background (--theme-ui-bg)
 -   Test that UI bar remains usable with your theme
 -   Comment your CSS to explain design choices tied to the story
 -   If the story has location-based tags (forest, village, dungeon), consider adding tag-based style variations
