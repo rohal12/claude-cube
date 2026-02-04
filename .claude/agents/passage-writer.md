@@ -67,6 +67,21 @@ word_count: 210
 -   Each passage should feel like a complete scene or beat
 -   End passages with forward momentum toward the choices
 
+### Punctuation Style
+
+-   **Do NOT use em-dashes (—)** in prose
+-   Use commas, periods, or separate sentences instead
+-   For parenthetical remarks, use commas or parentheses
+-   For abrupt breaks or interruptions, use commas or ellipsis (...)
+
+Examples:
+
+Bad: `The door creaked open—slowly, cautiously—and you stepped inside.`
+
+Good: `The door creaked open, slowly and cautiously, and you stepped inside.`
+
+Good: `The door creaked open. Slowly, cautiously, you stepped inside.`
+
 ### Choices
 
 -   Render player choices as `[[Choice text|passage_id]]` links
