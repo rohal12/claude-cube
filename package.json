@@ -1,0 +1,44 @@
+{
+    "name": "sugarcube-starter",
+    "version": "2.0.0",
+    "description": "Modern Starter kit for SugarCube",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "npm run dev",
+        "dev": "tsx .build/dev.ts",
+        "build": "cross-env NODE_ENV=production vite build",
+        "tweego": "tsx .build/tweego.ts --build",
+        "tweego:install": "tsx .build/tweego.ts --install"
+    },
+    "keywords": [
+        "twine",
+        "sugarcube",
+        "starter-kit",
+        "boilerplate",
+        "tweego"
+    ],
+    "author": "Nijiko Yonskai",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/browser-sync": "^2.29.1",
+        "@types/cross-spawn": "^6.0.6",
+        "@types/decompress": "^4.2.7",
+        "browser-sync": "^3.0.4",
+        "chokidar": "^5.0.0",
+        "cross-env": "^7.0.3",
+        "cross-spawn": "^7.0.6",
+        "decompress": "^4.2.1",
+        "del": "^8.0.1",
+        "got": "^14.4.1",
+        "postcss": "^8.4.49",
+        "postcss-csso": "^6.0.1",
+        "postcss-preset-env": "^10.1.3",
+        "postcss-selector-parser": "^7.1.1",
+        "sass": "^1.83.0",
+        "tsx": "^4.21.0",
+        "typescript": "^5.7.2",
+        "vite": "^6.0.7",
+        "@playwright/cli": "^0.0.63"
+    }
+}
