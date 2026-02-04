@@ -1,6 +1,5 @@
 node_modules
 dist
-.claude
 .prebuilt
 .vscode
 .tweego
