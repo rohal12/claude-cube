@@ -1,0 +1,92 @@
+# Claude-Cube: Interactive Story Generator
+
+## Project Overview
+SugarCube 2.37.3 / Tweego 2.1.1 project that generates interactive fiction stories using a multi-agent pipeline.
+Stories are compiled from `.twee` files in `src/story/` using Tweego, then bundled by Vite.
+
+## Build Commands
+- `npm run build` — Production build (Vite + Tweego) to `dist/`
+- `npm start` / `npm run dev` — Dev server with live reload on port 4321
+- `npm run tweego` — Run Tweego manually
+- `npm run tweego:install` — Install/reinstall Tweego
+
+## Directory Structure
+- `src/story/*.twee` — Twine story source files (Tweego compiles these)
+- `src/assets/` — JS/TS, SCSS, fonts, media, vendor scripts
+- `dist/` — Compiled output (auto-generated)
+- `story-workspace/` — Agent working files (NOT compiled by Tweego)
+
+## SugarCube Conventions
+
+### Passage Format
+```twee
+:: Passage Title [optional tags]
+Passage content here with prose, macros, and links.
+
+[[Choice text|Target Passage Title]]
+```
+
+### Links
+- Player choices: `[[Display text|Passage Title]]` (always use explicit display text)
+- Continue links: `[[Passage Title]]` (acceptable for non-choice transitions)
+- SugarCube resolves links by **passage title** (the text after `:: `), not by internal IDs
+
+### Variables
+- Story variables: `$variable_name` (persist across passages and saves)
+- Temporary variables: `_variable_name` (exist only in current passage)
+- All `$variables` MUST be initialized in the `:: StoryInit` passage
+- Boolean flags: `$has_item`, `$visited_place`, `$met_character`
+- Numeric trackers: `$trust`, `$health`, `$reputation`
+- String state: `$current_quest`, `$player_name`
+
+### Key Macros
+- `<<set $var = value>>` — assign variable
+- `<<if $condition>>...<<elseif>>...<<else>>...<</if>>` — conditional
+- `<<print $var>>` or `<<= $var>>` — display variable value
+- `<<link "text" "Passage">>...<</link>>` — link with embedded code
+- `<<goto "Passage">>` — immediate navigation
+- `<<nobr>>...<</nobr>>` — suppress whitespace
+
+### Special Passages
+- `StoryTitle` — sets the story name
+- `StoryInit` — runs once at startup, initializes all variables
+- `StoryData` — metadata (IFID, format). **Do NOT regenerate** — contains unique IFID
+- `PassageReady` — runs before each passage displays
+- `PassageDone` — runs after each passage renders
+
+### Branch Convergence Pattern
+At passages where multiple paths converge, use conditionals for variant text:
+```twee
+:: The Village Gate [village convergence]
+You arrive at the village.
+
+<<if $met_companion>>
+Your companion walks beside you.
+<<else>>
+You are alone.
+<</if>>
+
+<<if $has_key>>
+The key feels warm in your pocket.
+<</if>>
+
+[[Enter the village|Village Square]]
+```
+
+## Multi-Agent Story Creation Pipeline
+
+Working directory: `story-workspace/`
+
+### Agent Communication Files
+- `story-workspace/story-bible.md` — Story concept and design doc
+- `story-workspace/passage-graph.json` — Passage structure and connections
+- `story-workspace/lore/` — Character, world, and item reference docs
+- `story-workspace/passages/` — Individual passage prose (markdown with SugarCube)
+- `story-workspace/review/` — Review and test reports
+- `story-workspace/state.json` — Pipeline progress tracking
+
+### Rules for Agents
+- Read ONLY the files you need — do not read the entire workspace
+- POV, tense, and style are determined per-story by the Story Bible's Style Guide
+- The `StoryData.twee` file must never be overwritten or regenerated
+- Passage IDs (snake_case) are internal identifiers; passage titles (Title Case) are what SugarCube uses for linking
