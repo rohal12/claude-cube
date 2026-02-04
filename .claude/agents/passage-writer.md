@@ -127,9 +127,30 @@ Dave suddenly turns around and spots you!
 
 ### Conditional Content (Convergence Passages)
 
-When a passage has `type: "convergence"` and a `convergenceNote`, use `<<if>>` blocks:
+When a passage has `type: "convergence"` and a `convergenceNote`, use `<<if>>` blocks. **IMPORTANT**: Use line continuation (`\`) to prevent blank lines when conditions are false.
+
+✅ **Good** (no unwanted blank lines):
 
 ```
+You arrive at the village gate.\
+<<if $met_mira>>
+Mira walks beside you, her cloak pulled tight against the wind. "We're here," she murmurs.
+<<else>>
+You are alone. The gate looms ahead, weathered and unwelcoming.
+<</if>>\
+<<if $has_key>>
+The silver key in your pocket feels warm, almost humming.
+<</if>>
+
+[[Enter the village|village_square]]
+```
+
+Note the `\` at the end of lines to join them without creating line breaks.
+
+**Alternative** (using `<<nobr>>` wrapper):
+
+```
+<<nobr>>
 You arrive at the village gate.
 
 <<if $met_mira>>
@@ -143,6 +164,7 @@ The silver key in your pocket feels warm, almost humming.
 <</if>>
 
 [[Enter the village|village_square]]
+<</nobr>>
 ```
 
 Follow the `convergenceNote` for exactly which variables need conditional branches.
@@ -156,36 +178,81 @@ Follow the `convergenceNote` for exactly which variables need conditional branch
 
 ## SugarCube Syntax You Should Use
 
-| Syntax                                     | Purpose                      | Example                                   |
-| ------------------------------------------ | ---------------------------- | ----------------------------------------- |
-| `[[text\|id]]`                             | Player choice link           | `[[Open the door\|dark_room]]`            |
-| `<<set $var = val>>`                       | Set variable                 | `<<set $trust += 1>>`                     |
-| `<<if $cond>>...<</if>>`                   | Conditional text             | `<<if $has_key>>You have the key.<</if>>` |
-| `<<if>>...<<else>>...<</if>>`              | Conditional with alternative | See convergence example above             |
-| `<<if>>...<<elseif>>...<<else>>...<</if>>` | Multi-branch conditional     | For 3+ variants                           |
-| `<<print $var>>` or `<<= $var>>`           | Display variable value       | `Your trust is <<= $trust>>`              |
+| Syntax                                     | Purpose                         | Example                                   |
+| ------------------------------------------ | ------------------------------- | ----------------------------------------- |
+| `[[text\|id]]`                             | Player choice link              | `[[Open the door\|dark_room]]`            |
+| `<<set $var = val>>`                       | Set variable                    | `<<set $trust += 1>>`                     |
+| `<<if $cond>>...<</if>>`                   | Conditional text                | `<<if $has_key>>You have the key.<</if>>` |
+| `<<if>>...<<else>>...<</if>>`              | Conditional with alternative    | See convergence example above             |
+| `<<if>>...<<elseif>>...<<else>>...<</if>>` | Multi-branch conditional        | For 3+ variants                           |
+| `<<print $var>>` or `<<= $var>>`           | Display variable value          | `Your trust is <<= $trust>>`              |
+| `text \` (at end of line)                  | Line continuation (join lines)  | `Line one \` (newline) `line two`         |
+| `\ text` (at start of line)                | Line continuation (join lines)  | `Line one` (newline) `\ line two`         |
+| `<<nobr>>...<<\/nobr>>`                    | Remove all line breaks in block | Wrap complex passages with many macros    |
 
 ## Whitespace Control (CRITICAL)
 
-SugarCube renders blank lines as visible whitespace in the output. This disrupts reading flow and creates awkward gaps in prose.
+**Key Fact**: In SugarCube, every line break in your `.twee` source file becomes a `<br>` tag in the HTML output. Blank lines create visible gaps in the story.
 
-### The Problem
+### The Core Problem
 
-Macros on separate lines create blank lines in the output:
+Macros, especially conditional blocks, on separate lines create blank lines in the output even when they generate no visible text:
 
-❌ **Bad** (creates 3 blank lines):
+❌ **Bad** (creates multiple blank lines if conditions are false):
 
 ```
-<<set $trust += 1>>
-<<set $has_key = true>>
-<<set $met_guard = true>>
+<<if $lamp_knocked>>
+Somewhere behind you, the fallen desk lamp lies on the floor.
+<</if>>
 
-You continue down the hallway.
+<<if $duchess_allied>>
+On the cat tree, Duchess watches you with sharp green eyes.
+<</if>>
+
+<<if $biscuit_allied>>
+Biscuit hovers nearby, tail swaying, barely containing himself.
+<</if>>
 ```
 
-### Solution 1: Single-Line Macros (PREFERRED)
+If none of these conditions are true, this creates **three blank lines** in the output. If only one is true, you still get two unwanted blank lines.
 
-Place all consecutive macros on a single line with no spaces between them:
+### Solution 1: Line Continuation Markup (BEST for Conditionals)
+
+Use a backslash (`\`) at the end or beginning of lines to join them together without creating line breaks. The backslash, line break, and whitespace between lines are removed during rendering.
+
+✅ **Good** (no blank lines regardless of which conditions are true):
+
+```
+<<if $lamp_knocked>>\
+Somewhere behind you, the fallen desk lamp lies on the floor like a toppled monument to your audacity.
+<</if>>\
+<<if $duchess_allied>>\
+On the cat tree, Duchess watches you with those sharp green eyes, coiled and ready. She is waiting for your signal -- two short squeaks, one long. The distraction is loaded and primed.
+<</if>>\
+<<if $biscuit_allied>>\
+Biscuit hovers nearby, tail swaying, barely containing himself. He catches your eye and his whole body wiggles. *Are we doing the thing, Small Friend? Is it time for the thing?*
+<</if>>
+```
+
+The backslash at the end of each `<</if>>` removes the line break that would otherwise appear.
+
+**Alternative syntax** (backslash at start of next line):
+
+```
+<<if $lamp_knocked>>
+Somewhere behind you, the fallen desk lamp lies on the floor like a toppled monument to your audacity.
+<</if>>\
+<<if $duchess_allied>>
+On the cat tree, Duchess watches you with those sharp green eyes, coiled and ready.
+<</if>>\
+<<if $biscuit_allied>>
+Biscuit hovers nearby, tail swaying, barely containing himself.
+<</if>>
+```
+
+### Solution 2: Single-Line Macros (BEST for Simple Sets)
+
+Place all consecutive simple macros on a single line with no spaces between them:
 
 ✅ **Good**:
 
@@ -197,42 +264,230 @@ Every instinct screams that this is wrong.
 
 This creates NO blank lines between the prose sentences.
 
-### Solution 2: `<<nobr>>` Without Surrounding Blank Lines
+### Solution 3: `<<nobr>>` Wrapper (For Complex Blocks)
 
-If you must use multiple lines, wrap in `<<nobr>>` and place it directly adjacent to prose with NO blank lines before or after:
+For passages with many macros or complex logic, wrap the entire passage content in `<<nobr>>...</nobr>>`. This removes ALL line breaks and replaces them with single spaces.
 
 ✅ **Good**:
 
 ```
-You abandon the shadows and break for it.
 <<nobr>>
-<<set $chaos += 1>>
-<<set $stealth -= 1>>
+<<set $visited_kitchen = true>>
+
+You enter the kitchen. Moonlight streams through the window.
+
+<<if $has_key>>
+    The silver key in your pocket feels warm.
+<</if>>
+
+<<if $met_cook>>
+    The cook nods at you in recognition.
+<</if>>
+
+[[Open the pantry|pantry]]
+[[Leave|hallway]]
 <</nobr>>
-Every instinct screams that this is wrong.
 ```
 
-❌ **Bad** (blank lines around `<<nobr>>` still create gaps):
+With `<<nobr>>`, you can format for readability with blank lines and indentation, and SugarCube will collapse all whitespace appropriately.
+
+**Alternative**: Use the `nobr` special tag on the passage itself (the sugarcube-expert will add this during assembly if needed).
+
+### Solution 4: Line Continuation for Readability
+
+Use line continuation to break long lines of prose for readability while keeping them joined in output:
+
+✅ **Good** (wraps for readability, renders as one line):
 
 ```
-You abandon the shadows and break for it.
-
-<<nobr>>
-<<set $chaos += 1>>
-<<set $stealth -= 1>>
-<</nobr>>
-
-Every instinct screams that this is wrong.
+The rain in Spain falls \
+mainly on the plain.
 ```
+
+Renders as: "The rain in Spain falls mainly on the plain."
+
+### When to Use Each Solution
+
+| Situation                            | Recommended Solution        | Example                        |
+| ------------------------------------ | --------------------------- | ------------------------------ |
+| Multiple simple `<<set>>` macros     | Single-line macros          | `<<set $a = 1>><<set $b = 2>>` |
+| Multiple `<<if>>` blocks in sequence | Line continuation (`\`)     | End each `<</if>>` with `\`    |
+| Complex passage with many macros     | `<<nobr>>` wrapper          | Wrap entire passage content    |
+| Long prose line needing word wrap    | Line continuation (`\`)     | `Text \` (newline) `more text` |
+| Mid-prose conditional text           | Inline or line continuation | See examples below             |
 
 ### Rule of Thumb
 
-**Never have more than one consecutive blank line in your passage prose.** Between any two prose sentences, there should be either:
+**Never have more than one consecutive blank line in your passage prose** unless the entire passage is wrapped in `<<nobr>>`. Between any two prose sentences, there should be either:
 
--   Zero blank lines (macros on same line as prose)
--   One blank line (paragraph break)
+-   Zero blank lines (macros on same line as prose, or using line continuation)
+-   One blank line (intentional paragraph break)
 
-**Use single-line macros whenever possible** — they're cleaner and eliminate whitespace issues entirely.
+### Critical: Macros Embedded in Prose
+
+When a macro appears IN THE MIDDLE of narrative prose (not at the start of a passage), it MUST either:
+
+1. Be on the same line as the surrounding prose, OR
+2. Use line continuation to join lines, OR
+3. Have the entire passage wrapped in `<<nobr>>`
+
+❌ **Bad** (blank lines around macro create gaps):
+
+```
+You descend one shelf. Two.
+
+<<set $has_crumb = true>>
+
+On the third shelf, you pause beside...
+```
+
+✅ **Good Option 1** (no blank lines):
+
+```
+You descend one shelf. Two.
+<<set $has_crumb = true>>
+On the third shelf, you pause beside...
+```
+
+✅ **Good Option 2** (line continuation):
+
+```
+You descend one shelf. Two.\
+<<set $has_crumb = true>>\
+On the third shelf, you pause beside...
+```
+
+✅ **Good Option 3** (nobr wrapper):
+
+```
+<<nobr>>
+You descend one shelf. Two.
+
+<<set $has_crumb = true>>
+
+On the third shelf, you pause beside...
+<</nobr>>
+```
+
+### Practical Examples: Before and After
+
+#### Example 1: Multiple Optional Conditionals
+
+❌ **Before** (creates blank lines when conditions are false):
+
+```
+You stand at the threshold.
+
+<<if $lamp_knocked>>
+The fallen desk lamp lies behind you like a monument to your audacity.
+<</if>>
+
+<<if $duchess_allied>>
+Duchess watches from the cat tree, waiting for your signal.
+<</if>>
+
+<<if $biscuit_allied>>
+Biscuit hovers nearby, tail swaying with barely contained excitement.
+<</if>>
+
+[[Enter the room|next_passage]]
+```
+
+✅ **After** (no blank lines regardless of conditions):
+
+```
+You stand at the threshold.\
+<<if $lamp_knocked>>
+The fallen desk lamp lies behind you like a monument to your audacity.
+<</if>>\
+<<if $duchess_allied>>
+Duchess watches from the cat tree, waiting for your signal.
+<</if>>\
+<<if $biscuit_allied>>
+Biscuit hovers nearby, tail swaying with barely contained excitement.
+<</if>>
+
+[[Enter the room|next_passage]]
+```
+
+#### Example 2: Sets + Conditional Text
+
+❌ **Before**:
+
+```
+You grab the key from the table.
+
+<<set $has_key = true>>
+<<set $items_collected += 1>>
+
+<<if $suspicious_guard>>
+The guard narrows his eyes at you.
+<</if>>
+
+You slip it into your pocket.
+```
+
+✅ **After**:
+
+```
+You grab the key from the table.
+<<set $has_key = true>><<set $items_collected += 1>>\
+<<if $suspicious_guard>>
+The guard narrows his eyes at you.
+<</if>>\
+You slip it into your pocket.
+```
+
+#### Example 3: Complex Passage with `<<nobr>>`
+
+When you have many conditionals and want readable source code:
+
+✅ **Good**:
+
+```
+<<nobr>>
+<<set $entered_throne_room = true>>
+
+You push open the heavy doors and step into the throne room.
+
+<<if $crown_stolen>>
+    The empty pedestal where the crown once sat seems to accuse you.
+<</if>>
+
+<<if $king_knows>>
+    The king's eyes lock onto yours, cold with recognition.
+<<elseif $disguised>>
+    The king barely glances at you, fooled by your servant's garb.
+<<else>>
+    The king studies you with mild curiosity.
+<</if>>
+
+<<if $companion_name>>
+    $companion_name tenses beside you, hand moving toward their weapon.
+<</if>>
+
+The throne looms at the far end of the hall.
+
+[[Approach the throne|throne_approach]]
+[[Bow respectfully|throne_bow]]
+<<if $has_smoke_bomb>>
+    [[Create a distraction|throne_distraction]]
+<</if>>
+<</nobr>>
+```
+
+This reads cleanly in the source and produces properly spaced output.
+
+### Quality Check Before Submitting
+
+Before writing each passage file, verify:
+
+-   ✓ No unwanted blank lines around macros (unless wrapped in `<<nobr>>`)
+-   ✓ Conditional blocks either use line continuation (`\`) or are wrapped in `<<nobr>>`
+-   ✓ Only ONE blank line maximum for intentional paragraph breaks
+-   ✓ Macros are placed at narratively appropriate moments (not just dumped at the top)
+-   ✓ Long lines use `\` for word-wrapping in source without affecting output
+-   ✓ Test mentally: "If all my `<<if>>` conditions are false, will this create blank lines?"
 
 ### Critical: Macros Embedded in Prose
 
