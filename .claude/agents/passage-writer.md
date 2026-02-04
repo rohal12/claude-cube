@@ -234,6 +234,39 @@ Every instinct screams that this is wrong.
 
 **Use single-line macros whenever possible** — they're cleaner and eliminate whitespace issues entirely.
 
+### Critical: Macros Embedded in Prose
+
+When a macro appears IN THE MIDDLE of narrative prose (not at the start of a passage), it MUST be sandwiched directly between sentences with NO blank lines before OR after it:
+
+❌ **Bad** (blank lines around macro):
+
+```
+You descend one shelf. Two.
+
+<<set $has_crumb = true>>
+
+On the third shelf, you pause beside...
+```
+
+✅ **Good** (no blank lines):
+
+```
+You descend one shelf. Two.
+<<set $has_crumb = true>>
+On the third shelf, you pause beside...
+```
+
+**Think of macros as invisible code** — the prose should read as continuous sentences. Any blank line around a macro creates a visible gap in the story output.
+
+### Quality Check Before Submitting
+
+Before writing each passage file, verify:
+
+-   ✓ No blank lines immediately BEFORE any macro
+-   ✓ No blank lines immediately AFTER any macro
+-   ✓ Only ONE blank line maximum for paragraph breaks (between prose, never touching macros)
+-   ✓ Macros are placed at narratively appropriate moments (not just dumped at the top)
+
 ## Text Formatting (NOT Markdown!)
 
 SugarCube uses wiki-style markup, NOT markdown. Markdown syntax will render incorrectly.
@@ -264,6 +297,82 @@ Do NOT use any of these — the sugarcube-expert handles structural concerns:
 -   `<<widget>>`, `<<script>>`, custom macros
 -   JavaScript or CSS
 -   `<<link>>` macro (use `[[]]` syntax instead for simplicity)
+
+## Common Whitespace Mistakes to Avoid
+
+These are the most frequent errors that create unwanted blank lines in story output:
+
+### Mistake 1: Blank Lines Around Mid-Prose Macros
+
+The most common error is leaving blank lines when macros appear in the middle of narrative flow.
+
+❌ **Wrong**:
+
+```
+Your stomach growls with hunger.
+
+<<set $hunger += 1>>
+
+You press forward into the darkness.
+```
+
+This creates TWO blank lines in the output (one before and one after the macro).
+
+✅ **Correct**:
+
+```
+Your stomach growls with hunger.
+<<set $hunger += 1>>
+You press forward into the darkness.
+```
+
+This creates NO blank lines — the prose flows continuously.
+
+### Mistake 2: Blank Lines After Opening Macros
+
+❌ **Wrong**:
+
+```
+:: Passage Title
+<<set $visited = true>>
+
+You enter the room.
+```
+
+✅ **Correct**:
+
+```
+:: Passage Title
+<<set $visited = true>>
+You enter the room.
+```
+
+### Mistake 3: Blank Lines Around Multiple Macros
+
+❌ **Wrong**:
+
+```
+The door slams shut behind you.
+
+<<set $trapped = true>>
+<<set $panic += 1>>
+
+Your heart races.
+```
+
+✅ **Correct**:
+
+```
+The door slams shut behind you.
+<<set $trapped = true>><<set $panic += 1>>
+Your heart races.
+```
+
+### The Golden Rule
+
+**Every blank line in your passage source creates a visible paragraph break in the story output.**
+
+If you don't want a paragraph break, don't use a blank line — even around macros. Macros should be treated as invisible code that executes without affecting prose flow.
 
 ## Batching
 

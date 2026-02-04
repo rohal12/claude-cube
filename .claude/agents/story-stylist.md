@@ -93,51 +93,118 @@ body {
 
 ```css
 #ui-bar {
-  /* The sidebar */
+    /* The sidebar */
 }
 
 #ui-bar-toggle {
-  /* Sidebar show/hide button */
+    /* Sidebar show/hide button */
 }
 
 #ui-bar-body {
-  /* The main body of the sidebar */
+    /* The main body of the sidebar */
 }
 
 #story-title {
-  /* Title in sidebar */
+    /* Title in sidebar */
 }
 
 #story-caption {
-  /* Caption area below title */
+    /* Caption area below title */
 }
 
 #menu-core {
-  /* Core menu (Saves, Restart, etc.) */
+    /* Core menu (Saves, Restart, etc.) */
 }
 
 #menu-story {
-  /* Story-specific menu items */
+    /* Story-specific menu items */
 }
 
 #menu ul {
-  /* Menu list containers */
+    /* Menu list containers - has border in default SugarCube */
 }
 
 #menu li {
-  /* Individual menu items */
+    /* Individual menu items - has border-top in default SugarCube */
 }
 
-#menu li a, #menu li button {
-  /* Menu links and buttons */
+#menu li:not(:first-child) {
+    /* Menu items except first - default has border-top separator */
+}
+
+#menu li a,
+#menu li button {
+    /* Menu links and buttons - default has transparent border that shows on hover */
 }
 
 .menu-item {
-  /* Individual menu item wrapper */
+    /* Individual menu item wrapper */
 }
 
-#ui-bar a, #ui-bar button {
-  /* All links and buttons in the UI bar */
+#ui-bar a,
+#ui-bar button {
+    /* All links and buttons in the UI bar */
+}
+```
+
+**CRITICAL - Menu Border Structure:**
+
+SugarCube's default CSS creates a complex border structure for menus:
+
+-   `#menu ul` has a border around the entire menu
+-   `#menu li:not(:first-child)` has a `border-top` separator between items
+-   `#menu li a` has a transparent border that becomes visible on hover
+
+**This creates border conflicts.** You must reset these borders and create a clean structure:
+
+```css
+/* Reset default borders */
+#menu ul {
+    border: none; /* Remove default menu border */
+}
+
+#menu li:not(:first-child) {
+    border-top: none; /* Remove default separator */
+}
+
+#menu li a,
+#menu li button {
+    border: 1px solid transparent; /* Keep transparent border for hover */
+}
+```
+
+Then apply your own consistent border styling. Choose ONE approach:
+
+**Approach 1 - Borders on links/buttons only:**
+
+```css
+#menu li a,
+#menu li button {
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+#menu li a:hover,
+#menu li button:hover {
+    border-color: var(--theme-accent);
+}
+```
+
+**Approach 2 - Container borders with separators:**
+
+```css
+#menu ul {
+    border: 1px solid var(--theme-ui-border);
+    border-radius: 4px;
+}
+
+#menu li:not(:first-child) {
+    border-top: 1px solid var(--theme-ui-border);
+}
+
+#menu li a,
+#menu li button {
+    border: none; /* Remove link borders */
 }
 ```
 
@@ -401,77 +468,110 @@ body {
 // ===========================================
 
 #ui-bar {
-  background: var(--theme-ui-bg);
-  border-right: 1px solid var(--theme-ui-border);
+    background: var(--theme-ui-bg);
+    border-right: 1px solid var(--theme-ui-border);
 }
 
 #ui-bar-body {
-  // Sidebar body background
+    // Sidebar body background
 }
 
 #ui-bar-toggle {
-  // Toggle button styling
-  background: var(--theme-ui-bg);
-  border: 1px solid var(--theme-ui-border);
-  color: var(--theme-ui-text);
-  
-  &:hover {
-    background: var(--theme-bg-alt);
-    color: var(--theme-accent);
-  }
+    // Toggle button styling
+    background: var(--theme-ui-bg);
+    border: 1px solid var(--theme-ui-border);
+    color: var(--theme-ui-text);
+
+    &:hover {
+        background: var(--theme-bg-alt);
+        color: var(--theme-accent);
+    }
 }
 
 #story-title {
-  color: var(--theme-accent);
-  font-weight: 600;
+    color: var(--theme-accent);
+    font-weight: 600;
 }
 
 #story-caption {
-  color: var(--theme-text-muted);
+    color: var(--theme-text-muted);
 }
 
-// Menu styling - CRITICAL for visibility
+// Menu styling - CRITICAL for visibility and border structure
+//
+// IMPORTANT: SugarCube's default CSS has overlapping borders:
+//   - #menu ul has an outer border
+//   - #menu li:not(:first-child) has border-top separators
+//   - #menu li a has a transparent border
+// You MUST reset these to avoid border conflicts.
+
 #menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0.5em 0;
+    border: none; // CRITICAL: Remove default SugarCube border
 }
 
 #menu li {
-  margin: 0.5em 0;
+    margin: 0;
 }
 
+#menu li:not(:first-child) {
+    border-top: none; // CRITICAL: Remove default SugarCube separator
+}
+
+// Menu items (links and buttons) - use borders HERE only
 #menu li a,
 #menu li button {
-  display: block;
-  padding: 0.5em 1em;
-  color: var(--theme-ui-text);
-  text-decoration: none;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  background: transparent;
-  border: 1px solid transparent;
-  
-  &:hover {
-    background: var(--theme-bg-alt);
-    color: var(--theme-accent);
-    border-color: var(--theme-accent);
-  }
-  
-  &:active {
-    background: var(--theme-accent);
-    color: var(--theme-ui-bg);
-  }
+    display: block;
+    width: 100%;
+    padding: 0.6em 1em;
+    color: var(--theme-ui-text);
+    background: transparent;
+    text-decoration: none;
+    border: 1px solid transparent; // Transparent until hover
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+
+    // Ensure visibility for all link states
+    &:link,
+    &:visited {
+        color: var(--theme-ui-text);
+    }
+
+    // Clear hover state with visible border
+    &:hover {
+        background: var(--theme-ui-bg-hover);
+        color: var(--theme-accent);
+        border-color: var(--theme-accent);
+    }
+
+    // Active/pressed state
+    &:active {
+        background: var(--theme-accent);
+        color: var(--theme-ui-bg);
+        border-color: var(--theme-accent);
+    }
+
+    // Focus state for keyboard navigation
+    &:focus {
+        outline: 2px solid var(--theme-accent);
+        outline-offset: 2px;
+    }
 }
 
-// All links and buttons in UI bar
+// Ensure all UI bar links/buttons have proper text color
 #ui-bar a,
 #ui-bar button {
-  color: var(--theme-ui-text);
-  
-  &:hover {
-    color: var(--theme-accent);
-  }
+    color: var(--theme-ui-text);
+
+    &:hover {
+        color: var(--theme-accent);
+    }
 }
 
 // ===========================================

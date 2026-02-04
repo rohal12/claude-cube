@@ -101,6 +101,38 @@ When state triggers a consequence:
 -   Use numeric variables for gradients: `$trust`, `$reputation`
 -   Conditions in `links[].condition` should be simple SugarCube expressions: `$has_key`, `$trust >= 3`
 
+#### CRITICAL: Variables Must Have Effects
+
+**Every variable you set must be read and used somewhere in the story.**
+
+Variables serve two purposes:
+
+1. **Mechanical**: Gates choices via `links[].condition` or affects which ending is reached
+2. **Narrative**: Creates variation in convergence passages via `<<if>>` blocks (documented in `convergenceNote`)
+
+Before including any variable:
+
+-   Ask: "How does this variable change what the player experiences?"
+-   Ask: "Where will this variable be checked or displayed?"
+
+**Validation rules**:
+
+-   Every variable in `sets[]` MUST appear in at least ONE of:
+    -   A `links[].condition` (gates a choice or ending)
+    -   A passage's `convergenceNote` (creates text variation)
+    -   An ending's `requires[]` (determines which ending)
+-   Variables that are set but never read are dead code and MUST be removed
+-   Variables defined but never set anywhere should be removed from the `variables` array
+
+**Common mistakes to avoid**:
+
+-   Setting `$visited_location` but never checking it at convergence points
+-   Tracking NPC locations like `$guard_position` but never using it to affect danger
+-   Recording player's chosen approach like `$strategy` but never referencing it in endings
+-   Defining variables for "future features" that never get implemented
+
+**When you're tempted to add a variable, first identify where it will be read.**
+
 ### Naming Conventions
 
 -   Passage `id`: snake_case, max 30 characters, lowercase. Example: `forest_clearing`, `meet_elder`
@@ -220,7 +252,18 @@ Before writing output, verify all of these:
 6. Every non-ending passage has at least one link
 7. Every ending passage has zero links
 8. All variables referenced in `sets` and `links[].condition` exist in the `variables` array
-9. `meta.totalPassages` matches the actual count
-10. All passages are reachable from `start` (trace the graph)
+9. **Every variable that appears in `sets[]` also appears in at least one `links[].condition`, `convergenceNote`, or ending's `requires[]`**
+10. **No variables in the `variables` array are defined but never set in any passage**
+11. `meta.totalPassages` matches the actual count
+12. All passages are reachable from `start` (trace the graph)
 
 If any check fails, fix the graph before writing.
+
+### Variable Usage Audit
+
+For each variable in the `variables` array, trace:
+
+-   **Where it's SET**: List all passages with this variable in `sets[]`
+-   **Where it's READ**: List all `links[].condition`, `convergenceNote`, or `requires[]` that reference it
+-   **If never READ**: Remove the variable entirely or add conditions/convergences that use it
+-   **If never SET**: Remove the variable from the `variables` array
