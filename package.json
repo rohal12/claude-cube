@@ -21,6 +21,8 @@
     "author": "Nijiko Yonskai",
     "license": "MIT",
     "devDependencies": {
+        "@google/gemini-cli": "^0.27.0",
+        "@playwright/cli": "^0.0.63",
         "@types/browser-sync": "^2.29.1",
         "@types/cross-spawn": "^6.0.6",
         "@types/decompress": "^4.2.7",
@@ -38,7 +40,6 @@
         "sass": "^1.83.0",
         "tsx": "^4.21.0",
         "typescript": "^5.7.2",
-        "vite": "^6.0.7",
-        "@playwright/cli": "^0.0.63"
+        "vite": "^6.0.7"
     }
 }
