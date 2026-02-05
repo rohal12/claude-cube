@@ -1,0 +1,20 @@
+{
+    "permissions": {
+        "allow": [
+            "Bash(test:*)",
+            "Bash(python3:*)",
+            "Bash(grep:*)",
+            "Bash(npm run tweego:*)",
+            "Bash(npm run build:*)",
+            "Bash(npm start:*)",
+            "Bash(chmod:*)",
+            "Edit(./story-workspace/**)",
+            "Edit(./src/**)",
+            "Bash(curl *)",
+            "Bash(playwright-cli open:*)",
+            "Bash(./playwright-cli open:*)",
+            "Bash(npx:*)",
+            "Bash(npx @playwright/cli:*)"
+        ]
+    }
+}

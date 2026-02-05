@@ -4,3 +4,4 @@ dist
 .vscode
 .tweego
 story-workspace
+.playwright-cli
