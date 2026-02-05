@@ -289,6 +289,46 @@ Consider adding:
 -   **Shadows**: depth and mood
 -   **Transitions**: smooth interactions
 
+## Mobile & Responsive Design Requirements
+
+The story must be **fully usable on phones and small tablets**. Always design for mobile-first readability and interaction, then enhance for larger screens.
+
+-   **General layout**
+
+    -   Use a comfortable reading width on small screens: `#passages` should typically be `max-width: 42rem` or less and use `padding` to avoid edge-to-edge text.
+    -   Prevent horizontal scrolling on mobile; avoid fixed widths that exceed the viewport.
+    -   Ensure the main story area (`#story`, `#passages`, `.passage`) has sufficient top/bottom padding so text is not cramped against UI chrome.
+
+-   **Typography on mobile**
+
+    -   Base font size on mobile should be at least `16px` (e.g. `font-size: 1rem` or slightly larger) with `line-height` around `1.5–1.8` for body text.
+    -   Avoid overly condensed fonts; prioritize clarity over stylization for longer passages.
+    -   Use relative units (`rem`, `em`, `vw`) instead of absolute `px` where practical so text scales consistently.
+
+-   **Touch targets & spacing**
+
+    -   Links and buttons (especially in `.passage` and `#ui-bar`) should have at least `40–44px` of tap height with generous vertical spacing to avoid accidental taps.
+    -   Increase `padding` on `#menu li a`, `#menu li button`, and `.passage a` for small screens so they are easy to tap.
+    -   Ensure focus outlines and hover/active states remain visible on touch devices (e.g. use `:focus-visible` and `:active` styles, not just `:hover`).
+
+-   **SugarCube UI on small screens**
+
+    -   The `#ui-bar` must not permanently consume too much horizontal space on narrow screens; use a collapsed/overlay pattern where appropriate:
+        -   On small viewports, favor an overlay or off-canvas style bar that can be toggled rather than a fixed wide sidebar.
+        -   Ensure `#ui-bar-toggle` is clearly visible, reachable, and has a large tap area.
+    -   Make sure menus (`#menu`, `#menu-core`, `#menu-story`) wrap and stack cleanly without clipping or overlapping passage text.
+    -   Dialogs (`#ui-dialog`, saves/settings) should stay within the viewport, with internal scrolling if needed rather than page-level overflow.
+
+-   **Breakpoints**
+    -   At minimum, target:
+        -   `max-width: 480px` (small phones)
+        -   `max-width: 768px` (large phones/small tablets)
+    -   Use these to adjust:
+        -   `#ui-bar` width/behavior
+        -   `#passages` padding and margins
+        -   Font sizes for headings, title, and UI labels
+        -   Spacing between interactive elements
+
 ## Genre-Specific Guidelines
 
 ### Dark Fantasy / Horror
@@ -586,7 +626,57 @@ body {
 // ===========================================
 
 @media screen and (max-width: 768px) {
-    // Mobile adjustments
+    // Mobile layout: prioritize reading area
+    #story {
+        padding: 0.75rem;
+    }
+
+    #passages {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 0.5rem 0.75rem 1.25rem;
+    }
+
+    .passage {
+        font-size: 1rem; // Ensure at least 16px equivalent
+        line-height: 1.6;
+    }
+
+    // UI bar: make sure it doesn't steal horizontal space
+    #ui-bar {
+        width: 260px;
+    }
+
+    #ui-bar-toggle {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    // Touch-friendly menu items
+    #menu li a,
+    #menu li button {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    // Very small screens: tighten padding and ensure no horizontal scroll
+    body {
+        overflow-x: hidden;
+    }
+
+    #story {
+        padding: 0.5rem;
+    }
+
+    #passages {
+        padding: 0.5rem;
+    }
+
+    #ui-bar {
+        width: 240px;
+    }
 }
 ```
 
@@ -598,10 +688,13 @@ Before writing the file, verify:
 2. **Link visibility**: Links are clearly distinguishable from regular text
 3. **Hover states**: Interactive elements have visible hover feedback
 4. **UI Bar visibility**: Menu items (#menu li a, #menu li button) have sufficient contrast and clear hover states
-5. **UI Bar toggle**: The toggle button is visible and styled appropriately
-6. **Consistency**: Colors and fonts are used consistently throughout
-7. **No conflicts**: Styles don't break SugarCube's core functionality
-8. **Variables defined**: All CSS custom properties are defined in :root
+5. **UI Bar toggle**: The toggle button is visible, clearly tappable, and not obscured on small screens
+6. **Mobile readability**: On a narrow viewport, body text is at least ~16px, with comfortable line spacing and margins
+7. **No horizontal scroll**: On mobile widths, the layout does not force horizontal scrolling
+8. **Touch targets**: Links and buttons (story and UI) are large enough and spaced so that they are easy to tap
+9. **Consistency**: Colors and fonts are used consistently throughout
+10. **No conflicts**: Styles don't break SugarCube's core functionality
+11. **Variables defined**: All CSS custom properties are defined in :root
 
 ## Important Rules
 
@@ -610,6 +703,7 @@ Before writing the file, verify:
 -   Keep accessibility in mind — maintain sufficient color contrast
 -   **CRITICAL**: Always style UI bar menu items (#menu li a, #menu li button) to ensure they are visible and have clear hover states
 -   **CRITICAL**: Ensure UI bar text (--theme-ui-text) has sufficient contrast against UI bar background (--theme-ui-bg)
--   Test that UI bar remains usable with your theme
+-   Test that UI bar remains usable with your theme on both desktop and mobile screen sizes
+-   Always check the story on a narrow mobile viewport to confirm that text is readable, the UI bar is accessible, and no elements overflow the screen
 -   Comment your CSS to explain design choices tied to the story
 -   If the story has location-based tags (forest, village, dungeon), consider adding tag-based style variations

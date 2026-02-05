@@ -99,8 +99,8 @@ Run `claude` in your terminal and follow the authentication prompts.
 ### 3. Clone and Set Up the Project
 
 ```bash
-git clone <repository-url> claude-cube
-cd claude-cube
+npx degit https://github.com/rohal12/claude-cube.git <project-name>
+cd <project-name>
 npm install
 ```
 
