@@ -169,6 +169,85 @@ The silver key in your pocket feels warm, almost humming.
 
 Follow the `convergenceNote` for exactly which variables need conditional branches.
 
+### Outcome Chains: Mutually Exclusive State-Determined Results
+
+When a passage has an `outcomeChain` field (instead of or in addition to regular `links[]`), the outcome is **determined by game state**, not player choice. These outcomes are **mutually exclusive** — only one can happen.
+
+**Render `outcomeChain` as `<<if>>...<<elseif>>...<<else>>` — NOT as independent `<<if>>` blocks.**
+
+The outcomes are listed in priority order (1 = highest). Evaluate them in order; first matching condition wins.
+
+**Example passage node:**
+
+```json
+{
+  "id": "escape_resolution",
+  "outcomeChain": {
+    "description": "Escape outcomes",
+    "outcomes": [
+      { "target": "failure", "condition": "$chaos >= 3", "priority": 1, "narrative": "Catastrophic failure" },
+      { "target": "negotiator", "condition": "$caught and $charm >= 2", "priority": 2, "narrative": "Caught but charming" },
+      { "target": "success", "condition": "$stealth >= 3", "priority": 3, "narrative": "Clean escape" }
+    ],
+    "fallback": { "target": "basic_escape", "narrative": "Default path" }
+  },
+  "links": [
+    { "target": "share_allies", "label": "Share with your allies", "condition": "$has_allies" }
+  ]
+}
+```
+
+**Correct rendering:**
+
+```
+Dave's footsteps approach. The moment of truth.\
+<<if $chaos >= 3>>
+Everything goes spectacularly, catastrophically wrong. Biscuit chooses this exact moment to bark.
+[[Continue|failure]]
+<<elseif $caught and $charm >= 2>>
+Dave spots you, but something in your expression makes him laugh instead of shout.
+[[Continue|negotiator]]
+<<elseif $stealth >= 3>>
+You melt into the shadows. Dave's eyes pass right over you.
+[[Slip away unseen|success]]
+<<else>>
+No special advantages. Just you and the open ground.
+[[Make a run for it|basic_escape]]
+<</if>>
+
+<<if $has_allies>>
+[[Share with your allies|share_allies]]
+<</if>>
+```
+
+**Key rules:**
+
+1. **Use `<<elseif>>`, not separate `<<if>>` blocks** — this ensures mutual exclusivity
+2. **Order matches priority** — evaluate conditions 1 → 2 → 3 → fallback
+3. **Always include `<<else>>` for the fallback** — prevents dead ends
+4. **Outcome links use neutral labels** — "Continue" for forced outcomes, descriptive for player-advantaged outcomes
+5. **Regular `links[]` stay separate** — render them after the outcome chain with their own `<<if>>` conditions
+6. **Use line continuation** — add `\` before the `<<if>>` to prevent blank lines
+
+**Why this matters:**
+
+Without `<<elseif>>`, overlapping conditions show contradictory options:
+
+❌ **Wrong** (player sees both success AND failure):
+```
+<<if $stealth >= 3>>[[Slip away unseen|success]]<</if>>
+<<if $chaos >= 3>>[[Everything goes wrong|failure]]<</if>>
+```
+
+✅ **Correct** (only one outcome shown):
+```
+<<if $chaos >= 3>>
+[[Continue|failure]]
+<<elseif $stealth >= 3>>
+[[Slip away unseen|success]]
+<</if>>
+```
+
 ### Ending Passages
 
 -   Ending passages have no outgoing links

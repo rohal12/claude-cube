@@ -93,17 +93,44 @@ Write `story-workspace/review/review-report.md`. Create the directory if needed.
 
 10. **Missing Convergence Conditionals**: Convergence passages (from the graph) should contain `<<if>>` blocks. If a convergence passage has no conditionals, it may not differentiate between paths.
 
+11. **Overlapping Conditional Links (Mutual Exclusivity)**: Check for passages where multiple `<<if>>` blocks contain links with conditions that could BOTH be true simultaneously, representing incompatible outcomes.
+
+    **Pattern to detect:**
+    ```twee
+    <<if $stealth >= 3>>[[Escape unseen|success]]<</if>>
+    <<if $chaos >= 3>>[[Everything fails|failure]]<</if>>
+    ```
+
+    If both `$stealth >= 3` and `$chaos >= 3` can be true at the same time, the player sees contradictory options (why would they choose failure?).
+
+    **How to check:**
+    - Look for consecutive `<<if>>...<</if>>` blocks (not `<<elseif>>`) that each contain a link
+    - Analyze whether the conditions can overlap (e.g., different variables, or non-exclusive ranges)
+    - Flag if the link targets represent incompatible outcomes (success vs failure, escape vs caught)
+
+    **Should be:**
+    ```twee
+    <<if $chaos >= 3>>[[Continue|failure]]
+    <<elseif $stealth >= 3>>[[Escape unseen|success]]
+    <<else>>[[Make a run for it|default]]
+    <</if>>
+    ```
+
+    **Report as WARNING with:** passage name, the overlapping conditions, and suggestion to use `<<elseif>>` chain instead.
+
+12. **OutcomeChain Rendering**: For passages that have `outcomeChain` in the graph, verify the `.twee` file uses `<<if>>...<<elseif>>...<<else>>` (not independent `<<if>>` blocks). Cross-reference the graph's `outcomeChain.outcomes[]` against the rendered conditionals.
+
 ### Suggestions (Nice to Have)
 
-11. **Passage Length**: Flag passages under 50 words (too short) or over 500 words (too long for interactive fiction).
+13. **Passage Length**: Flag passages under 50 words (too short) or over 500 words (too long for interactive fiction).
 
-12. **Choice Text Length**: Flag choices longer than 10 words or shorter than 2 words.
+14. **Choice Text Length**: Flag choices longer than 10 words or shorter than 2 words.
 
-13. **Tone Consistency**: Read passages and note any that significantly deviate from the tone described in the Story Bible.
+15. **Tone Consistency**: Read passages and note any that significantly deviate from the tone described in the Story Bible.
 
-14. **Character Name Consistency**: Check that character names are spelled the same way throughout all passages.
+16. **Character Name Consistency**: Check that character names are spelled the same way throughout all passages.
 
-15. **Graph vs. Twee Alignment**: Verify that every passage in the passage-graph.json exists in the `.twee` files, and vice versa (excluding special passages).
+17. **Graph vs. Twee Alignment**: Verify that every passage in the passage-graph.json exists in the `.twee` files, and vice versa (excluding special passages).
 
 ## How to Perform the Checks
 

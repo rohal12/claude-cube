@@ -93,6 +93,99 @@ When state triggers a consequence:
 -   Add a `convergenceNote` explaining the automatic branch
 -   The "forced" path should have a neutral label like "Continue" since it's not really a choice
 
+### Outcome Chains: Mutually Exclusive State-Determined Results
+
+Some passages have **outcomes determined by accumulated state**, not player choice. These outcomes are **mutually exclusive** — only one can happen based on the game state.
+
+**The Problem with Independent Conditions:**
+
+```json
+"links": [
+  { "target": "success", "label": "Slip away unseen", "condition": "$stealth >= 3" },
+  { "target": "failure", "label": "Everything goes wrong", "condition": "$chaos >= 3" },
+  { "target": "negotiation", "label": "Charm your way out", "condition": "$caught and $charm >= 2" }
+]
+```
+
+If `$stealth >= 3` AND `$chaos >= 3`, the player sees BOTH "slip away unseen" AND "everything goes wrong" — which are logically incompatible. Why would anyone choose failure when success is available?
+
+**Solution: Use `outcomeChain` for mutually exclusive outcomes**
+
+When a passage's outcome depends on state (not player choice), use the `outcomeChain` field instead of putting all conditions in `links[]`:
+
+```json
+{
+  "id": "escape_resolution",
+  "type": "branch",
+  "briefing": "The escape resolves based on accumulated state. Use outcomeChain for the mutually exclusive outcomes.",
+  "links": [
+    { "target": "share_allies", "label": "Share with your allies", "condition": "$has_allies" }
+  ],
+  "outcomeChain": {
+    "description": "Escape outcomes evaluated in priority order — first match wins",
+    "outcomes": [
+      {
+        "target": "spectacular_failure",
+        "condition": "$chaos >= 3",
+        "priority": 1,
+        "narrative": "Catastrophic failure — too much chaos, everything goes wrong"
+      },
+      {
+        "target": "negotiator",
+        "condition": "$caught and $charm >= 2",
+        "priority": 2,
+        "narrative": "Caught but charming — can negotiate"
+      },
+      {
+        "target": "perfect_escape",
+        "condition": "$stealth >= 3",
+        "priority": 3,
+        "narrative": "Clean escape — high stealth succeeds"
+      }
+    ],
+    "fallback": {
+      "target": "basic_escape",
+      "narrative": "Default escape path if no special conditions match"
+    }
+  }
+}
+```
+
+**Key rules for `outcomeChain`:**
+
+1. **Priority order matters**: Outcomes are evaluated 1 → 2 → 3 → fallback. First matching condition wins.
+2. **Failures before successes**: Check catastrophic failures first, then partial failures, then conditional successes, then default.
+3. **`fallback` is required**: Always provide a fallback so players never hit a dead end.
+4. **Don't duplicate exclusions**: If priority 1 checks `$chaos >= 3`, priority 2 doesn't need `$chaos < 3` — the chain handles this.
+5. **`links[]` for actual choices**: Keep `links[]` for things the player decides (like "share with allies"). Use `outcomeChain` for things the game state decides.
+
+**Priority Order Guidelines:**
+
+| Priority | Category | Example |
+|----------|----------|---------|
+| 1 (highest) | Catastrophic failure | `$chaos >= 3` — everything goes wrong |
+| 2 | Caught/detected states | `$caught` — player was seen |
+| 3 | Conditional success | `$stealth >= 3` — stealth succeeded |
+| 4 (lowest/fallback) | Default outcome | No special conditions — basic path |
+
+**The passage writer will render outcomeChain as `<<if>>...<<elseif>>...<<else>>`:**
+
+```twee
+<<if $chaos >= 3>>
+Everything goes spectacularly wrong.
+[[Continue|The Spectacular Failure]]
+<<elseif $caught and $charm >= 2>>
+Dave spots you, but finds you adorable.
+[[Continue|The Negotiator]]
+<<elseif $stealth >= 3>>
+You melt into the shadows.
+[[Slip away unseen|The Perfect Escape]]
+<<else>>
+No special advantages. Just you and the open ground.
+[[Make a run for it|Basic Escape]]
+<</if>>
+```
+
 ### Variable Management
 
 -   Every variable used in `sets` or `links[].condition` must appear in the top-level `variables` array
@@ -239,6 +332,10 @@ Before including any variable:
 -   `requires`: Soft preconditions for reaching this passage (documentary, not enforced in code). Useful for endings.
 -   `tags`: Array of lowercase tags for .twee passage headers and CSS styling.
 -   `convergenceNote`: Instructions for the passage-writer on what `<<if>>` conditional blocks to include at merge points. Null for non-convergence passages.
+-   `outcomeChain`: (Optional) For passages where the outcome is determined by state, not player choice. Contains:
+    -   `description`: Explains what this chain resolves
+    -   `outcomes[]`: Array of mutually exclusive outcomes with `target`, `condition`, `priority`, and `narrative`
+    -   `fallback`: Required default outcome with `target` and `narrative`
 
 ## Self-Validation
 
@@ -258,6 +355,17 @@ Before writing output, verify all of these:
 12. All passages are reachable from `start` (trace the graph)
 
 If any check fails, fix the graph before writing.
+
+### Outcome Chain Validation
+
+For each passage with `outcomeChain`:
+
+1. **All targets exist**: Every `outcomes[].target` and `fallback.target` must reference an existing passage `id`
+2. **Priorities are unique**: No two outcomes should have the same priority number
+3. **Outcomes are ordered**: Priorities should be sequential (1, 2, 3...)
+4. **Fallback is present**: Every `outcomeChain` must have a `fallback`
+5. **No overlap with links[]**: Targets in `outcomeChain` should not also appear in `links[]` with the same condition
+6. **Conditions are actually exclusive**: Verify that higher-priority conditions logically preclude lower ones (e.g., if priority 1 checks `$chaos >= 3`, a success condition should implicitly require `$chaos < 3`)
 
 ### Variable Usage Audit
 
