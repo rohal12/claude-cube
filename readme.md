@@ -6,12 +6,12 @@ An AI-powered interactive fiction generator that uses Claude's multi-agent frame
 
 ## 🎨 Features
 
--   **AI-Powered Story Generation** — Multi-agent pipeline creates complete interactive stories
--   **Claude Agentic Framework** — Specialized agents for story design, writing, styling, and review
--   **Automatic Tweego & SugarCube Setup** — All dependencies installed automatically
--   **Live Development Server** — Hot reload with Browser-Sync
--   **Custom Theming** — AI-generated SCSS themes based on story genre and mood
--   **Production Builds** — Optimized output ready for distribution
+- **AI-Powered Story Generation** — Multi-agent pipeline creates complete interactive stories
+- **Claude Agentic Framework** — Specialized agents for story design, writing, styling, and review
+- **Automatic Tweego & SugarCube Setup** — All dependencies installed automatically
+- **Live Development Server** — Hot reload with Browser-Sync
+- **Custom Theming** — AI-generated SCSS themes based on story genre and mood
+- **Production Builds** — Optimized output ready for distribution
 
 ## 🤖 Claude Agentic Framework
 
@@ -19,14 +19,14 @@ This project uses Claude's multi-agent system to generate interactive stories th
 
 ### Story Creation Agents
 
--   **Story Architect** — Designs overall story structure, themes, and narrative arcs
--   **Plot Architect** — Creates detailed passage graphs and story flow
--   **Passage Writer** — Writes individual passage prose with SugarCube macros
--   **Lore Keeper** — Maintains consistency for characters, world, and items
--   **Story Stylist** — Generates custom SCSS themes matching story tone
--   **Story Reviewer** — Reviews and provides feedback on story quality
--   **Story Tester** — Tests story functionality and link validation
--   **SugarCube Expert** — Ensures proper macro usage and conventions
+- **Story Architect** — Designs overall story structure, themes, and narrative arcs
+- **Plot Architect** — Creates detailed passage graphs and story flow
+- **Passage Writer** — Writes individual passage prose with SugarCube macros
+- **Lore Keeper** — Maintains consistency for characters, world, and items
+- **Story Stylist** — Generates custom SCSS themes matching story tone
+- **Story Reviewer** — Reviews and provides feedback on story quality
+- **Story Tester** — Tests story functionality and link validation
+- **SugarCube Expert** — Ensures proper macro usage and conventions
 
 ### Agent Workflow
 
@@ -43,18 +43,18 @@ All agents communicate through structured files in `story-workspace/` and follow
 
 Built on **[nijikokun/sugarcube-starter](https://github.com/nijikokun/sugarcube-starter)** with AI agent enhancements:
 
--   [Vite](https://vitejs.dev/) — Fast build tooling
--   [TypeScript](https://www.typescriptlang.org/)
--   [Sass](https://sass-lang.com/) with [Modern CSS Support](https://github.com/csstools/postcss-preset-env#readme)
--   [Browser-Sync](https://browsersync.io/) — Live reloading
--   [SugarCube 2.37.3](https://www.motoslave.net/sugarcube/2/) — Interactive fiction engine
--   [Tweego 2.1.1](https://www.motoslave.net/tweego/) — Story compiler
+- [Vite](https://vitejs.dev/) — Fast build tooling
+- [TypeScript](https://www.typescriptlang.org/)
+- [Sass](https://sass-lang.com/) with [Modern CSS Support](https://github.com/csstools/postcss-preset-env#readme)
+- [Browser-Sync](https://browsersync.io/) — Live reloading
+- [SugarCube 2.37.3](https://www.motoslave.net/sugarcube/2/) — Interactive fiction engine
+- [Tweego 2.1.1](https://www.motoslave.net/tweego/) — Story compiler
 
 ## ℹ Requirements
 
--   [Node.js](https://nodejs.org/en/) 18+
--   [Claude CLI](https://code.claude.com/docs/en/setup) (Claude Code)
--   Any code editor (VSCode, Cursor, or similar)
+- [Node.js](https://nodejs.org/en/) 18+
+- [Claude CLI](https://code.claude.com/docs/en/setup) (Claude Code)
+- Any code editor (VSCode, Cursor, or similar)
 
 ## 🚀 Getting Started
 
@@ -76,8 +76,8 @@ irm https://claude.ai/install.ps1 | iex
 
 **Alternative installations:**
 
--   **Homebrew**: `brew install --cask claude-code`
--   **WinGet**: `winget install Anthropic.ClaudeCode`
+- **Homebrew**: `brew install --cask claude-code`
+- **WinGet**: `winget install Anthropic.ClaudeCode`
 
 For detailed installation instructions and troubleshooting, see the [official Claude Code setup guide](https://code.claude.com/docs/en/setup).
 
@@ -87,12 +87,12 @@ After installation, authenticate using one of these options:
 
 **For individuals:**
 
--   **Claude Pro or Max plan** (recommended) — Subscribe at [claude.ai/pricing](https://claude.ai/pricing)
--   **Claude Console** — Set up billing at [console.anthropic.com](https://console.anthropic.com)
+- **Claude Pro or Max plan** (recommended) — Subscribe at [claude.ai/pricing](https://claude.ai/pricing)
+- **Claude Console** — Set up billing at [console.anthropic.com](https://console.anthropic.com)
 
 **For teams:**
 
--   **Claude for Teams or Enterprise** — Contact [claude.ai/pricing](https://claude.ai/pricing)
+- **Claude for Teams or Enterprise** — Contact [claude.ai/pricing](https://claude.ai/pricing)
 
 Run `claude` in your terminal and follow the authentication prompts.
 
@@ -111,7 +111,6 @@ This will install all Node.js dependencies and set up the project.
 Start Claude CLI in your project directory:
 
 ```bash
-cd claude-cube
 claude
 ```
 
@@ -153,8 +152,8 @@ Your compiled story will be in `dist/index.html` — ready to host anywhere!
 
 **New to SugarCube?**
 
--   Check out the [SugarCube Documentation](https://www.motoslave.net/sugarcube/2/docs/)
--   Read `CLAUDE.md` for agent-specific conventions and guidelines
+- Check out the [SugarCube Documentation](https://www.motoslave.net/sugarcube/2/docs/)
+- Read `CLAUDE.md` for agent-specific conventions and guidelines
 
 ## 👩‍💻 Commands
 
@@ -225,14 +224,12 @@ dist/                       # Compiled output (auto-generated)
 Agents don't directly modify story files. Instead, they work through a structured pipeline:
 
 1. **Story Bible** (`story-workspace/story-bible.md`) — Master design document containing:
-
     - Genre, setting, tone
     - Character profiles
     - World lore
     - Style guide (POV, tense, vocabulary)
 
 2. **Passage Graph** (`story-workspace/passage-graph.json`) — Story structure:
-
     - Passage IDs and titles
     - Choice links and consequences
     - Branching paths and convergence points
@@ -243,7 +240,6 @@ Agents don't directly modify story files. Instead, they work through a structure
     - Player choices
     - Variable tracking
 4. **Lore Documents** (`story-workspace/lore/`) — Reference material:
-
     - Character details and relationships
     - World facts and rules
     - Item descriptions
@@ -266,9 +262,9 @@ When agents complete their work, the story is compiled:
 
 You can edit any generated files:
 
--   **Story content**: Edit `.twee` files in `src/story/`
--   **Styling**: Modify `src/assets/app/styles/story-theme.scss`
--   **Variables**: Update `src/story/StoryInit.twee`
+- **Story content**: Edit `.twee` files in `src/story/`
+- **Styling**: Modify `src/assets/app/styles/story-theme.scss`
+- **Variables**: Update `src/story/StoryInit.twee`
 
 Just remember: changes to `src/story/` are independent of `story-workspace/`. If you regenerate with AI agents, manual edits will be overwritten.
 
@@ -302,10 +298,10 @@ Example prompt for iteration:
 
 Agent definitions are in `.claude/agents/`. Each agent has a markdown file defining:
 
--   Personality and expertise
--   Task-specific instructions
--   Output format requirements
--   Quality standards
+- Personality and expertise
+- Task-specific instructions
+- Output format requirements
+- Quality standards
 
 To customize, edit the relevant agent file (e.g., `.claude/agents/passage-writer.md`) to adjust tone, style preferences, or behavior.
 
@@ -391,7 +387,7 @@ Macros scripts and styles go into `src/assets/vendor`
 
 To reference images at `src/assets/media/<asset_path>`:
 
--   `src/assets/media/favicon.png` → `media/favicon.png`
+- `src/assets/media/favicon.png` → `media/favicon.png`
 
 Example in HTML:
 
@@ -426,43 +422,43 @@ Replace `YOUR_TAG_HERE` with your Google Analytics ID.
 
 **Project Documentation**
 
--   `CLAUDE.md` — Complete guide to the multi-agent framework
--   `.claude/agents/` — Individual agent definitions and capabilities
--   `.claude/skills/` — Available AI skills for story generation
+- `CLAUDE.md` — Complete guide to the multi-agent framework
+- `.claude/agents/` — Individual agent definitions and capabilities
+- `.claude/skills/` — Available AI skills for story generation
 
 **Claude CLI & Tools**
 
--   [Claude Code Documentation](https://code.claude.com/docs/en/setup) — Installation and setup
--   [Anthropic Claude](https://www.anthropic.com/claude) — Claude AI platform
--   [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) — Connect external tools to Claude
+- [Claude Code Documentation](https://code.claude.com/docs/en/setup) — Installation and setup
+- [Anthropic Claude](https://www.anthropic.com/claude) — Claude AI platform
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) — Connect external tools to Claude
 
 **SugarCube Resources**
 
--   [SugarCube Documentation](https://www.motoslave.net/sugarcube/2/docs/)
--   [Tweego Documentation](https://www.motoslave.net/tweego/docs/)
--   [Chapel's Custom Macro Collection](https://github.com/ChapelR/custom-macros-for-sugarcube-2)
--   [HiEv SugarCube Sample Code](https://twine.hiev-heavy-ind.com/)
+- [SugarCube Documentation](https://www.motoslave.net/sugarcube/2/docs/)
+- [Tweego Documentation](https://www.motoslave.net/tweego/docs/)
+- [Chapel's Custom Macro Collection](https://github.com/ChapelR/custom-macros-for-sugarcube-2)
+- [HiEv SugarCube Sample Code](https://twine.hiev-heavy-ind.com/)
 
 **Interactive Fiction**
 
--   [IFDB - Interactive Fiction Database](https://ifdb.org/)
--   [Twine Community](https://twinery.org/community)
--   [Twine Games Discord](https://discord.com/invite/n5dJvPp) — Active community for help and discussion
--   [IntFiction Forum](https://intfiction.org/)
+- [IFDB - Interactive Fiction Database](https://ifdb.org/)
+- [Twine Community](https://twinery.org/community)
+- [Twine Games Discord](https://discord.com/invite/n5dJvPp) — Active community for help and discussion
+- [IntFiction Forum](https://intfiction.org/)
 
 ## 💜 Acknowledgements
 
 This project builds upon:
 
--   **[SugarCube Starter](https://github.com/nijikokun/sugarcube-starter)** by [@nijikokun](https://github.com/nijikokun) — Modern starter kit with Vite, TypeScript, and Sass
--   **SugarCube** by Thomas M. Edwards — Interactive fiction engine
--   **Tweego** by Thomas M. Edwards — Story compiler
--   **Claude** by Anthropic — AI agent framework and Claude Code CLI
+- **[SugarCube Starter](https://github.com/nijikokun/sugarcube-starter)** by [@nijikokun](https://github.com/nijikokun) — Modern starter kit with Vite, TypeScript, and Sass
+- **SugarCube** by Thomas M. Edwards — Interactive fiction engine
+- **Tweego** by Thomas M. Edwards — Story compiler
+- **Claude** by Anthropic — AI agent framework and Claude Code CLI
 
 **Community Thanks:**
 
--   [Twine Games Discord](https://discord.com/invite/n5dJvPp) — Supportive community for interactive fiction creators
--   The interactive fiction and AI development communities for their inspiration and tools
+- [Twine Games Discord](https://discord.com/invite/n5dJvPp) — Supportive community for interactive fiction creators
+- The interactive fiction and AI development communities for their inspiration and tools
 
 ## 📝 License
 
