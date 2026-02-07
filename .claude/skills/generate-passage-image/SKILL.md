@@ -144,12 +144,12 @@ Read `story-workspace/visual-style.md` and proceed.
     - Uses character appearance details from the visual style guide verbatim
     - Ends with the Prompt Suffix from the visual style guide
     - Never includes dialogue or text to render in the image
-    - **MUST include** "wide landscape format" or "16:9 widescreen composition" in the scene description to ensure landscape output (do NOT rely on CLI flags for aspect ratio — Gemini respects aspect ratio cues in the prompt text)
-    - **MUST include** "no watermark, no signature, no artist mark" to prevent watermarks in the output
+    - **Do NOT include** "wide landscape format", "16:9", or "widescreen" in the prompt text — aspect ratio is controlled solely by the API's `imageConfig.aspectRatio` parameter. Including aspect ratio hints in the prompt causes the model to render black letterbox bars inside the image.
+    - Include "no watermark, no signature, no artist mark" in the prompt — but be aware this is **not fully reliable**. Gemini may still render watermarks stochastically. If the user reports a watermark, simply regenerate (the next attempt often comes out clean).
 
 **Example prompt:**
 
-> A small black-and-white hooded rat peers through the bars of his cage on a bookshelf, gazing down at an open pizza box on a coffee table far below, golden cheese glistening under warm lamplight in a cozy cluttered apartment. Wide landscape format, 16:9 widescreen composition. Digital illustration, cinematic composition, rat-level perspective, warm apartment lighting, comedic heist atmosphere, no text, no watermark, no signature
+> A small black-and-white rat with dark markings over his head and shoulders peers through the bars of his cage on a bookshelf, gazing down at an open pizza box on a coffee table far below, golden cheese glistening under warm lamplight in a cozy cluttered apartment. Digital illustration, cinematic composition, rat-level perspective, warm apartment lighting, comedic heist atmosphere, no text, no watermark, no signature
 
 ## Step 7: User Approval (Cost Gate)
 
@@ -188,7 +188,10 @@ Options: "Generate" / "Edit the prompt first" / "Cancel"
 
 3. **Call the Gemini REST API directly** (do NOT use the nano-banana skill — it does not support the `aspectRatio` parameter, causing all images to generate as 1:1 square). Use this curl command:
 
+    **Use a two-step approach** (save response to temp file, then extract). Piping curl directly through jq and base64 can silently produce empty files due to buffering issues with large base64 payloads.
+
     ```bash
+    # Step 1: Call the API and save the full response
     curl -s -X POST \
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent" \
       -H "x-goog-api-key: $GEMINI_API_KEY" \
@@ -201,17 +204,19 @@ Options: "Generate" / "Edit the prompt first" / "Cancel"
             "aspectRatio": "16:9"
           }
         }
-      }' | jq -r '.candidates[0].content.parts[] | select(.inlineData) | .inlineData.data' | base64 -d > "src/assets/media/passages/<slug>.png"
+      }' -o /tmp/gemini-response.json
+
+    # Step 2: Extract and decode the image
+    jq -r '.candidates[0].content.parts[] | select(.inlineData) | .inlineData.data' /tmp/gemini-response.json | base64 -d > "src/assets/media/passages/<slug>.png"
     ```
 
     **Important notes on the curl command:**
-    - make sure to follow the curl command exactly
+    - **Always use the two-step approach** (save to temp file, then extract). Do NOT pipe curl directly through jq — large base64 responses can produce empty output files.
     - The `$GEMINI_API_KEY` environment variable must be set (same key used by nano-banana)
-    - The `aspectRatio` in `imageConfig` is what actually controls the output dimensions — prompt text hints like "16:9" are unreliable
+    - The `aspectRatio` in `imageConfig` is what actually controls the output dimensions — do NOT put aspect ratio hints in the prompt text (causes black letterbox bars)
     - `responseModalities` must be `["IMAGE"]` (not `["TEXT", "IMAGE"]`) to get a pure image response
     - The response contains the image as base64 in `candidates[0].content.parts[].inlineData.data`
-    - `jq` and `base64` are used to extract and decode the image data
-    - If the API returns an error, check with: `curl ... | jq .` (without the pipe to base64)
+    - If the API returns an error, inspect with: `jq . /tmp/gemini-response.json`
 
 4. Verify the image was generated successfully:
     - Check the file exists and has non-zero size
@@ -349,3 +354,10 @@ npm run build
 - **The Prompt Suffix is critical** — it anchors the art style, perspective, and mood across all passage images.
 - **One image per passage.** If a passage already has an image, the user must explicitly choose to replace it.
 - **Alt text is required** for accessibility. Keep it concise and descriptive.
+
+## Known Gemini Pitfalls
+
+- **"Hooded" is misinterpreted.** The term "hooded rat" (a breed with dark markings on the head/shoulders) causes Gemini to draw a rat wearing a literal fabric hood. Always describe the markings explicitly instead: "dark markings over head and shoulders, white body".
+- **Aspect ratio in prompt text causes letterboxing.** Phrases like "wide landscape format", "16:9 widescreen composition" in the prompt text cause Gemini to render black bars inside the image. The `imageConfig.aspectRatio` API parameter is the only reliable way to control dimensions — never duplicate it in the prompt.
+- **"No watermark" is unreliable.** Including "no watermark, no signature" in the prompt reduces but does not eliminate watermarks. Gemini may still render them stochastically. If a watermark appears, simply regenerate — the next attempt often comes out clean.
+- **Piping curl directly can produce empty files.** Large base64 API responses can cause silent failures when piped through `jq | base64 -d`. Always save the response to a temp file first, then extract in a second step.
