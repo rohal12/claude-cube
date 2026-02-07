@@ -4,4 +4,5 @@ dist
 .vscode
 .tweego
 story-workspace
+nanobanana-output
 .playwright-cli
